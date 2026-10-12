@@ -1,22 +1,23 @@
 # OpenCV Document Scanner
 
-Academic project demonstrating a classical computer vision pipeline for automated document scanning using **OpenCV** and **NumPy** without relying on deep learning.
+Проект, показывающий пайплайн классического компьютерного зрения для автоматического сканирования документов с использованием библиотек **OpenCV** и **NumPy** без применения глубокого обучения.
 
-## Pipeline Steps
-1. **Preprocessing**: Grayscale conversion and Gaussian blur ($\text{kernel} = 7 \times 7$) for noise reduction.
-2. **Binarization & Edge Detection**: Otsu's thresholding combined with contour retrieval (`findContours` + `approxPolyDP`) to isolate the document boundary (4-corner polygon).
-3. **Perspective Correction**: Four-point geometric transform (`warpPerspective`) enforcing standard A4 aspect ratios ($1 : 1.414$).
-4. **Post-processing**: Adaptive thresholding (`adaptiveThreshold`) to produce clean, high-contrast BW scan results (clearing shadows and background textures).
+##  Описание проекта и сравнительный анализ (Canny vs Otsu)
+В рамках разработки пайплайна было проведено исследование двух подходов к детекции границ документа:
+1. **Детектор границ Кэнни (Canny Edge Detector):** Показывает высокую чувствительность к высокочастотным шумам и текстурам реального окружения (например, текстуре деревянного пола или плитки, теням и складкам). На практике это приводит к множеству ложных контуров, из-за чего алгоритм полигоняльной аппроксимации не может корректно выделить единую форму листа.
+2. **Метод Оцу (Otsu's Thresholding):** В сочетании с размытием по Гауссу и поиском внешних контуров (`findContours` + `approxPolyDP`) обеспечивает стабильное глобальное разделение объекта и фона, успешно игнорируя фоновые текстуры и надежно выделяя 4 угла документа.
 
-##  Performance Benchmarks (Execution Time)
-Measured on standard CPU execution:
-- Preprocessing: ~12-15 ms
-- Contour Detection & Otsu: ~25-30 ms
-- Perspective Warping (A4): ~15-20 ms
-- Adaptive Thresholding: ~10-15 ms
-- **Total Pipeline Execution Time: ~65–80 ms**
+##  Этапы пайплайна (Pipeline Steps)
+1. **Предобработка (Preprocessing):** Перевод в оттенки серого и размытие по Гауссу (размер ядра $7 \times 7$) для подавления шумов.
+2. **Бинаризация и детекция (Otsu + Contours):** Пороговая обработка по методу Оцу и поиск внешнего контура для точного определения границ листа.
+3. **Коррекция перспективы (Perspective Correction):** Четырехточечное геометрическое преобразование (`warpPerspective`) с принудительным соблюдением стандартных пропорций листа А4 ($1 : 1.414$).
+4. **Постобработка (Post-processing):** Адаптивная пороговая фильтрация (`adaptiveThreshold`) для получения чистых черно-белых результатов (очистка от теней и текстуры фона).
 
-##  Requirements
-Install dependencies via pip:
-```bash
-pip install -r requirements.txt
+##  Анализ производительности времени выполнения
+Замеры на стандартном процессоре (CPU):
+- Предобработка: ~12–15 мс
+- Детекция контуров и порог Оцу: ~25–30 мс
+- Трансформация перспективы (А4): ~15–20 мс
+- Адаптивная бинаризация: ~10–15 мс
+- **Общее время выполнения пайплайна: ~65–80 мс**
+
