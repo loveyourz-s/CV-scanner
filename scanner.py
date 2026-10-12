@@ -82,6 +82,4 @@ def benchmark_document_scanner(image_path):
     return warped, final_scan
 
 if __name__ == "__main__":
-    # Пример вызова
-    # warped, scanned = benchmark_document_scanner('IMG_0259.JPG')
     pass
